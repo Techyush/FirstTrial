@@ -1,12 +1,12 @@
 package com.avd.firsttrial;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,22 +14,21 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
-    Button buttonLogOut, buttonSend;
+    Button buttonLogOut, buttonSend, buttonNext;
     TextView textViewDetails;
     FirebaseUser user;
     String uid, user_email;
-    EditText edtSendName,edtSendSurname;
+    EditText edtSendId, edtSendName,edtSendDesc, edtSendPrice, edtSendRating ;
     DatabaseReference personDBDetails;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -37,10 +36,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         auth = FirebaseAuth.getInstance();
+        edtSendId = findViewById(R.id.edtId);
         edtSendName = findViewById(R.id.edtName);
-        edtSendSurname = findViewById(R.id.edtSurname);
+        edtSendDesc = findViewById(R.id.edtDesc);
+        edtSendPrice = findViewById(R.id.edtPrice);
+        edtSendRating = findViewById(R.id.edtRating);
         buttonSend = findViewById(R.id.btnSubmit);
         buttonLogOut = findViewById(R.id.btnLogOut);
+        buttonNext = findViewById(R.id.btnNext);
         textViewDetails = findViewById(R.id.txtUserDetails);
         user = auth.getCurrentUser();
         assert user != null;
@@ -59,34 +62,33 @@ public class MainActivity extends AppCompatActivity {
             textViewDetails.setText(user.getEmail());
         }
 
-        buttonSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                insertDetails();
-            }
+        buttonSend.setOnClickListener(view -> insertDetails());
+
+        buttonNext.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), FinalScreen.class);
+            startActivity(intent);
+            finish();
         });
 
-
-        buttonLogOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(getApplicationContext(), login.class);
-                startActivity(intent);
-                finish();
-            }
+        buttonLogOut.setOnClickListener(view -> {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(getApplicationContext(), login.class);
+            startActivity(intent);
+            finish();
         });
     }
 
     private void insertDetails(){
-        String mail = user_email.toString();
+        String f_id = edtSendId.getText().toString();
+        String mail = user_email;
         String name = edtSendName.getText().toString();
-        String surname = edtSendSurname.getText().toString();
-        String id = uid.toString();
+        String desc = edtSendDesc.getText().toString();
+        String price = edtSendPrice.getText().toString();
+        String rating = edtSendRating.getText().toString();
 
-        Details details = new Details(id,mail,name,surname);
+        Details details = new Details(f_id,mail,name,desc,price,rating);
 
-        personDBDetails.child(id).child("data").setValue(details);
+        personDBDetails.child("menu").child(f_id).child("chinese").setValue(details);
         Toast.makeText(MainActivity.this, "Successful", Toast.LENGTH_SHORT).show();
     }
 }

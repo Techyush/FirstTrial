@@ -8,4 +8,13 @@
     <string name="hello">Hello!</string>
     <string name="send">Send</string>
     <string name="enter_your_name">Enter your name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="create_account">Create Account</string>
+    <string name="login_now_">Login now!</string>
+    <string name="enter_your_surname">Enter your surname</string>
+    <string name="read_data">Read Data</string>
+    <string name="food_item">Food Item</string>
+    <string name="description">Description</string>
+    <string name="price">Price</string>
 </resources>
