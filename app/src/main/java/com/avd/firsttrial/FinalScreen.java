@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,22 +12,30 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class FinalScreen extends AppCompatActivity {
 
     EditText edtSearch;
     TextView txtId, txtName, txtDesc, txtPrice, txtRating;
     Button btnSearchFood;
+    DatabaseReference mDatabase;
+    FirebaseDatabase firebaseDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_final_screen);
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
 
         edtSearch = findViewById(R.id.edtFoodId);
         txtId = findViewById(R.id.txtFoodId);
@@ -39,46 +48,42 @@ public class FinalScreen extends AppCompatActivity {
         btnSearchFood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String _foodID = txtId.getText().toString();
-                String _foodName = txtName.getText().toString();
-                String _foodDesc = txtDesc.getText().toString();
-                String _foodPrice = txtPrice.getText().toString();
-                String _foodRating = txtRating.getText().toString();
 
-                Query checkFood = FirebaseDatabase.getInstance().getReference("menu").child("id").child("chinese").equalTo(_foodID);
-                System.out.println(checkFood);
+                mDatabase= FirebaseDatabase.getInstance().getReference("Details");
 
-                checkFood.addChildEventListener(new ChildEventListener() {
+                Query checkID = mDatabase.child("menu").orderByChild("f_id").equalTo(edtSearch.getText().toString());
+
+                checkID.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                        if(snapshot.exists()){
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()){
+                            String id = snapshot.child(edtSearch.getText().toString()).child("f_id").getValue(String.class);
+                            String name = snapshot.child(edtSearch.getText().toString()).child("name").getValue(String.class);
+                            String desc = snapshot.child(edtSearch.getText().toString()).child("desc").getValue(String.class);
+                            String price = snapshot.child(edtSearch.getText().toString()).child("price").getValue(String.class);
+                            String rating = snapshot.child(edtSearch.getText().toString()).child("rating").getValue(String.class);
 
-                            String showID = snapshot.child(_foodID).child("id").getValue(String.class);
-                            txtId.setText(showID);
+                            txtId.setText("Food Item ID : " + id);
+                            txtName.setText("Name : " + name);
+                            txtDesc.setText("Description : " + desc);
+                            txtPrice.setText("Price : "+price);
+                            txtRating.setText("Rating : "+rating);
                         }
                     }
 
                     @Override
-                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
-                    @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(FinalScreen.this, error.getMessage(), Toast.LENGTH_LONG).show();
+
                     }
                 });
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

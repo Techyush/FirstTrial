@@ -1,19 +1,20 @@
 package com.avd.firsttrial;
 
 public class Details {
-    String id, name, mail, desc, price, rating;
+    String f_id, name, mail, desc, price, rating;
 
-    public Details(String id, String mail, String name, String desc, String price, String rating) {
-        this.mail = mail;
-        this.id = id;
+    public Details(String f_id, String name, String desc, String price, String rating, String mail) {
+
+        this.f_id = f_id;
         this.name = name;
         this.desc = desc;
         this.price = price;
         this.rating = rating;
+        this.mail = mail;
     }
 
-    public String uid(){
-        return id;
+    public String getF_id() {
+        return f_id;
     }
 
     public String getName() {

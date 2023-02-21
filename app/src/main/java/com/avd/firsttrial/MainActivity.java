@@ -86,9 +86,9 @@ public class MainActivity extends AppCompatActivity {
         String price = edtSendPrice.getText().toString();
         String rating = edtSendRating.getText().toString();
 
-        Details details = new Details(f_id,mail,name,desc,price,rating);
+        Details details = new Details(f_id,name,desc,price,rating,mail);
 
-        personDBDetails.child("menu").child(f_id).child("chinese").setValue(details);
+        personDBDetails.child("menu").child(f_id).setValue(details);
         Toast.makeText(MainActivity.this, "Successful", Toast.LENGTH_SHORT).show();
     }
 }
